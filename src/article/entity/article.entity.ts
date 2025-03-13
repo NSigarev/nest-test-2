@@ -5,10 +5,10 @@ import {
   ManyToOne,
   JoinColumn,
   CreateDateColumn,
-  UpdateDateColumn
-} from "typeorm";
-import { User } from "../../user/entity/user.entity";
-import { ApiProperty } from "@nestjs/swagger";
+  UpdateDateColumn,
+} from 'typeorm';
+import { User } from '../../user/entity/user.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Article {
@@ -18,10 +18,10 @@ export class Article {
   @Column()
   title!: string;
 
-  @Column('text')
+  @Column('text', { default: '' })
   content!: string;
 
-  @Column('simple-array')
+  @Column('simple-array', { default: [] })
   tags!: string[];
 
   @Column({ default: false })
@@ -37,6 +37,6 @@ export class Article {
   @JoinColumn({ name: 'authorId' })
   author?: User;
 
-  @Column()
+  @Column({ nullable: false })
   authorId!: number;
 }

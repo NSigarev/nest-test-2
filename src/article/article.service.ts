@@ -1,8 +1,8 @@
-import { ForbiddenException, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Article } from "./entity/article.entity";
-import { FindManyOptions, Repository } from "typeorm";
-import { User } from "../user/entity/user.entity";
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Article } from './entity/article.entity';
+import { FindManyOptions, Raw, Repository } from 'typeorm';
+import { User } from '../user/entity/user.entity';
 
 @Injectable()
 export class ArticlesService {
@@ -19,6 +19,14 @@ export class ArticlesService {
     return this.articleRepository.find(opt);
   }
 
+  async findByTags(tags: string[], user: User | null): Promise<Article[]> {
+    return this.articleRepository.find({
+      where: {
+        tags: Raw((alias) => `${alias} && ARRAY[:...inputArray]`, { tags }),
+      },
+    });
+  }
+
   async findOne(id: number): Promise<Article | null> {
     return this.articleRepository.findOne({ where: { id } });
   }
@@ -28,8 +36,15 @@ export class ArticlesService {
     return this.articleRepository.save(newArticle);
   }
 
-  async update(id: number, article: Partial<Article>, author: User): Promise<Article> {
-    const existingArticle = await this.articleRepository.findOne({ where: { id }, relations: ['author'] });
+  async update(
+    id: number,
+    article: Partial<Article>,
+    author: User,
+  ): Promise<Article> {
+    const existingArticle = await this.articleRepository.findOne({
+      where: { id },
+      relations: ['author'],
+    });
 
     if (!existingArticle) {
       throw new Error('Article not found');
@@ -41,7 +56,10 @@ export class ArticlesService {
   }
 
   async delete(id: number, author: User): Promise<void> {
-    const existingArticle = await this.articleRepository.findOne({ where: { id }, relations: ['author'] });
+    const existingArticle = await this.articleRepository.findOne({
+      where: { id },
+      relations: ['author'],
+    });
 
     if (!existingArticle) {
       throw new Error('Article not found');
