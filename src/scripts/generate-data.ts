@@ -30,9 +30,11 @@ async function generateData() {
   const users = [] as User[];
   for (let i = 0; i < 5; i++) {
     const user = new User();
+    const psw = faker.internet.password();
     user.login = faker.internet.username();
-    user.passwordHash = await bcrypt.hash(faker.internet.password(), 10);
+    user.passwordHash = await bcrypt.hash(psw, 10);
     user.email = faker.internet.email();
+    user['passwd'] = psw;
     users.push(user);
   }
   console.log(users);
