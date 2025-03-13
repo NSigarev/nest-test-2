@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from '../user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../user/entity/user.entity';
+import { ByTokenStrategy } from "./by-token-strategy.service";
 
 @Module({
   imports: [
@@ -32,7 +33,7 @@ import { User } from '../user/entity/user.entity';
     ConfigModule,
     UserModule,
   ],
-  providers: [AuthService],
+  providers: [AuthService, ByTokenStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}
