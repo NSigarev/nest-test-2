@@ -8,7 +8,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
-import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Article {
@@ -21,7 +20,7 @@ export class Article {
   @Column('text', { default: '' })
   content!: string;
 
-  @Column('simple-array', { default: [] })
+  @Column('text', { array: true, default: [] })
   tags!: string[];
 
   @Column({ default: false })

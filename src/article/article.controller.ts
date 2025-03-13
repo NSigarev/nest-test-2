@@ -41,6 +41,7 @@ export class ArticlesController {
   }
 
   @Public()
+  @ApiBearerAuth()
   @Get('filter-by-tags')
   @ApiOperation({ summary: 'Get articles filtered by tags' })
   @ApiQuery({

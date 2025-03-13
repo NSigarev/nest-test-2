@@ -22,7 +22,7 @@ export class ArticlesService {
   async findByTags(tags: string[], user: User | null): Promise<Article[]> {
     return this.articleRepository.find({
       where: {
-        tags: Raw((alias) => `${alias} && ARRAY[:...inputArray]`, { tags }),
+        tags: Raw((alias) => `${alias} && ARRAY[:...tags]`, { tags }),
       },
     });
   }
