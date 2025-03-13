@@ -1,44 +1,29 @@
-import {
-  Controller,
-  Post,
-  Body,
-  UnauthorizedException,
-  Get,
-  Param,
-  Inject,
-} from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { UserService } from './user.service';
-import { LoginUserDto, RegisterUserDto } from './dto/user.dto';
-import { AuthService } from '../auth/auth.service';
-import { Public } from '../auth/public.decorator';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('Users')
 @Controller('users')
 export class UserController {
-  constructor(
-    private readonly usersService: UserService,
-    @Inject(AuthService)
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly usersService: UserService) {}
 
-  @Public()
-  @Post('register')
-  async register(@Body() registerUserDto: RegisterUserDto) {
-    const { email, login, password } = registerUserDto;
-    return this.usersService.createUser(email, login, password);
-  }
-
-  @Public()
-  @Post('login')
-  async login(@Body() loginUserDto: LoginUserDto) {
-    const { login, password } = loginUserDto;
-    const user = await this.usersService.findOneByLogin(login);
-    if (user && (await user.validatePassword(password))) {
-      return this.authService.generateToken(user);
-    }
-    throw new UnauthorizedException('Invalid credentials');
-  }
-  @Get('profile')
+  @Get('profile/:id')
+  @ApiBearerAuth() // Указываем, что метод требует авторизации
+  @ApiOperation({ summary: 'Get user profile by ID' }) // Описание операции
+  @ApiParam({ name: 'id', description: 'User ID', type: String }) // Описание параметра
+  @ApiResponse({
+    status: 200,
+    description: 'User profile data',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'User not found' })
   async getProfile(@Param('id') id: string) {
-    return 'haha scumed';
+    return 'haha scumed' + id;
   }
 }

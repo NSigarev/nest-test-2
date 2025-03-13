@@ -1,8 +1,8 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { PassportStrategy } from "@nestjs/passport";
+import { Inject, Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { UserService } from "../user/user.service";
-import { ConfigService } from "@nestjs/config";
+import { UserService } from '../user/user.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -11,10 +11,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private readonly userService: UserService,
     private readonly configService: ConfigService,
   ) {
+    const secret = configService.get('TOKEN_SECRET');
+    if (!secret) {
+      throw new Error(`No secret provided for token in config`);
+    }
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get('TOKEN_SECRET'), // Замените на ваш секретный ключ
+      secretOrKey: secret,
     });
   }
 
