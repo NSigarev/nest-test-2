@@ -22,7 +22,6 @@ import { ByTokenStrategy } from "./by-token-strategy.service";
         return {
           global: true,
           secret: secret,
-          secretOrPrivateKey: secret,
           signOptions: {
             expiresIn: configService.get<string>('JWT_EXPIRE_TIME'),
           },

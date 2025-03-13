@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Public } from './public.decorator';
+import { Public } from './decorators/public.decorator';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { LoginUserDto, RegisterUserDto } from '../user/dto/user.dto';
 import { UserService } from '../user/user.service';

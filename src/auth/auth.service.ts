@@ -3,6 +3,7 @@ import { User } from '../user/entity/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { TokenContent } from "./types/token";
 
 @Injectable()
 export class AuthService {
@@ -24,8 +25,8 @@ export class AuthService {
     return this.userRepository.save(user);
   }
 
-  generateToken(user: User): { access_token: string } {
-    const payload = { login: user.login, sub: user.id };
+  generateToken(user: TokenContent): { access_token: string } {
+    const payload = { login: user.login, id: user.id };
     return {
       access_token: this.jwtService.sign(payload),
     };
