@@ -15,7 +15,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           username: cfg.get('DB_ADMIN_LOGIN'),
           password: cfg.get('DB_ADMIN_PASSWORD'),
           database: cfg.get('DB_DATABASE_NAME'),
-          synchronize: false,
+          synchronize: true,
           entities: [__dirname + '/../**/*.entity.{js,ts}'],
           migrations: ['dist/migration/*{.ts,.js}'],
         };
