@@ -1,9 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { User } from '../user/entity/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { TokenContent } from "./types/token";
+import { TokenContent } from './types/token';
 
 @Injectable()
 export class AuthService {
@@ -17,12 +17,25 @@ export class AuthService {
     email: string,
     login: string,
     password: string,
-  ): Promise<User> {
+  ): Promise<User | null> {
+    const loginUser = await this.userRepository.findOne({
+      where: { login: login },
+    });
+    if (loginUser) {
+      throw new ConflictException('login in use');
+    }
+    const mailUser = await this.userRepository.findOne({
+      where: { email: email },
+    });
+    if (mailUser) {
+      throw new ConflictException('mail in use');
+    }
     const user = new User();
     user.email = email;
     user.login = login;
     await user.setPassword(password);
-    return this.userRepository.save(user);
+    const res = await this.userRepository.save(user);
+    return this.userRepository.findOne({ where: { id: res.id } });
   }
 
   generateToken(user: TokenContent): { access_token: string } {

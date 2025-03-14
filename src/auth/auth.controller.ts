@@ -27,6 +27,7 @@ export class AuthController {
     description: 'User successfully registered',
   })
   @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 409, description: 'Credentials used' })
   async register(@Body() registerUserDto: RegisterUserDto) {
     const { email, login, password } = registerUserDto;
     return this.authService.createUser(email, login, password);
@@ -43,7 +44,7 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
   async login(@Body() loginUserDto: LoginUserDto) {
     const { login, password } = loginUserDto;
-    const user = await this.userService.findOneByLogin(login);
+    const user = await this.userService.findForAuth(login);
     if (user && (await user.validatePassword(password))) {
       return this.authService.generateToken(user);
     }
