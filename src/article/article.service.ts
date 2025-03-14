@@ -52,7 +52,7 @@ export class ArticlesService {
       throw new ForbiddenException('You are not the author of this article');
     }
     Object.assign(existingArticle, article);
-    return await this.articleRepository.save(article);
+    return await this.articleRepository.save(existingArticle);
   }
 
   async delete(id: number, author: User): Promise<void> {

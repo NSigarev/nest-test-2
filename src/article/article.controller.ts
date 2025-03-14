@@ -2,7 +2,7 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
+  Get, HttpCode,
   Param,
   Post,
   Put, Query
@@ -126,6 +126,7 @@ export class ArticlesController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiResponse({ status: 404, description: 'Article not found' })
+  @HttpCode(204)
   async delete(@Param('id') id: number, @GetUser() user: User): Promise<void> {
     return this.articlesService.delete(id, user);
   }
