@@ -9,7 +9,9 @@ WORKDIR /var/www/test-nest
 
 # Копируем package.json и устанавливаем зависимости
 COPY package.json package-lock.json ./
-RUN npm ci
+
+# Устанавливаем зависимости
+RUN npm install
 
 # Копируем исходники
 COPY . .
