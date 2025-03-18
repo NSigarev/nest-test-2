@@ -22,11 +22,9 @@ async function generateData() {
 
   await dataSource.initialize();
 
-  // Очищаем таблицы (опционально)
   await dataSource.getRepository(Article).delete({});
   await dataSource.getRepository(User).delete({});
 
-  // Создаём пользователей
   const users = [] as User[];
   for (let i = 0; i < 5; i++) {
     const user = new User();
@@ -40,23 +38,22 @@ async function generateData() {
   console.log(users);
   await dataSource.getRepository(User).save(users);
 
-  // Создаём статьи
   const articles = [] as Article[];
   for (let i = 0; i < 20; i++) {
     const article = new Article();
     article.title = faker.lorem.sentence();
+    article.description = faker.lorem.words();
     article.content = faker.lorem.paragraphs(3);
     article.tags = faker.helpers.arrayElements(
       ['NestJS', 'TypeScript', 'Backend', 'Frontend', 'Database'],
       faker.number.int({ min: 1, max: 3 }),
     );
     article.isPublic = faker.datatype.boolean();
-    article.author = faker.helpers.arrayElement(users); // Связываем статью с рандомным пользователем
+    article.author = faker.helpers.arrayElement(users);
     articles.push(article);
   }
   await dataSource.getRepository(Article).save(articles);
 
-  console.log('Database seeded successfully!');
   await dataSource.destroy();
 }
 

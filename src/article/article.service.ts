@@ -5,7 +5,7 @@ import { FindManyOptions, Raw, Repository } from 'typeorm';
 import { User } from '../user/entity/user.entity';
 
 @Injectable()
-export class ArticlesService {
+export class ArticleService {
   constructor(
     @InjectRepository(Article)
     private readonly articleRepository: Repository<Article>,

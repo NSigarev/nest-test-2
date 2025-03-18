@@ -7,7 +7,7 @@ import {
   Post,
   Put, Query
 } from "@nestjs/common";
-import { ArticlesService } from './article.service';
+import { ArticleService } from './article.service';
 import { Article } from './entity/article.entity';
 import { User } from '../user/entity/user.entity';
 import { GetUser } from '../auth/decorators/user.decorator';
@@ -17,8 +17,8 @@ import { CreateArticleDto } from "./dto/create-article.dto";
 
 @ApiTags('articles') // Группируем endpoints в Swagger UI
 @Controller('articles')
-export class ArticlesController {
-  constructor(private readonly articlesService: ArticlesService) {}
+export class ArticleController {
+  constructor(private readonly articlesService: ArticleService) {}
 
   @Public()
   @Get()

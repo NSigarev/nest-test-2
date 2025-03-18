@@ -1,6 +1,6 @@
 {
   "name": "node-postgres-docker",
-  "version": "0.5.5",
+  "version": "0.6.0",
   "description": "",
   "author": "",
   "private": true,
@@ -14,6 +14,10 @@
     "start:prod": "node dist/main",
     "start:docker": "sudo docker compose up --build",
     "start:docker:db": "sudo docker compose up db --build",
+    "typeorm": "ts-node ./node_modules/typeorm/cli",
+    "typeorm:run-migrations": "npm run typeorm migration:run -- -d ./src/database/database.datasource.ts",
+    "typeorm:run-revert": "npm run typeorm migration:revert -- -d ./src/database/database.datasource.ts",
+    "typeorm:migration:gen": "npm run typeorm migration:generate -- -d ./src/database/database.datasource.ts",
     "seed": "ts-node src/scripts/generate-data.ts"
   },
   "dependencies": {

@@ -18,6 +18,9 @@ export class Article {
   title!: string;
 
   @Column('text', { default: '' })
+  description!: string;
+
+  @Column('text', { default: '' })
   content!: string;
 
   @Column('text', { array: true, default: [] })
