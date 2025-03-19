@@ -1,6 +1,6 @@
 {
   "name": "node-postgres-docker",
-  "version": "0.6.0",
+  "version": "0.9.0",
   "description": "",
   "author": "",
   "private": true,
@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@faker-js/faker": "^9.6.0",
+    "@nestjs/cache-manager": "^3.0.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^4.0.1",
     "@nestjs/core": "^10.0.0",
