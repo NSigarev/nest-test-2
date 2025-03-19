@@ -10,9 +10,17 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { ArticleModule } from './article/article.module';
+import { redisStore } from "cache-manager-redis-store";
+import { CacheModule } from "@nestjs/cache-manager";
 
 @Module({
   imports: [
+    CacheModule.register({
+      store: redisStore,
+      host: 'localhost',
+      port: 6379,
+      ttl: 600, // Время жизни кеша в секундах (10 минут)
+    }),
     ConfigModule.forRoot(),
     DatabaseModule,
     UserModule,

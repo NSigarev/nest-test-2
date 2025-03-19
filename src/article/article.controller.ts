@@ -7,18 +7,20 @@ import {
   Post,
   Put, Query
 } from "@nestjs/common";
-import { ArticlesService } from './article.service';
+import { ArticleService } from './article.service';
 import { Article } from './entity/article.entity';
 import { User } from '../user/entity/user.entity';
 import { GetUser } from '../auth/decorators/user.decorator';
 import { Public } from '../auth/decorators/public.decorator';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CreateArticleDto } from "./dto/create-article.dto";
+import { FindOptionsOperator, FindOptionsType, ValidateFields } from "../common";
+import { PaginationQueryDto } from "../commonDto/pagination.dto";
 
-@ApiTags('articles') // Группируем endpoints в Swagger UI
+@ApiTags('articles')
 @Controller('articles')
-export class ArticlesController {
-  constructor(private readonly articlesService: ArticlesService) {}
+export class ArticleController {
+  constructor(private readonly articleService: ArticleService) {}
 
   @Public()
   @Get()
@@ -31,13 +33,49 @@ export class ArticlesController {
     isArray: true,
   })
   async findAll(@GetUser() user: User | null): Promise<Article[]> {
-    if (user) return this.articlesService.findAll();
+    if (user) return this.articleService.findAll();
     else
-      return this.articlesService.findWhere({
+      return this.articleService.findWhere({
         where: {
           isPublic: true,
         },
       });
+  }
+
+  @Public()
+  @Post('/search')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: ArticleService.findOptions,
+      example: {
+        'article.title': {operator: FindOptionsOperator.Equal, type: FindOptionsType.Any, value: 'string'},
+        'author.login': {operator: FindOptionsOperator.Equal, type: FindOptionsType.Any, value: 'string'},
+        'article.tags': {operator: FindOptionsOperator.Equal, type: FindOptionsType.Any, value: 'string'},
+        'article.content': {operator: FindOptionsOperator.Equal, type: FindOptionsType.Any, value: 'string'},
+        'article.created_at': {operator: FindOptionsOperator.Equal, type: FindOptionsType.Any, value: 'string'},
+        'article.description': {operator: FindOptionsOperator.Equal, type: FindOptionsType.Any, value: 'string'},
+      }
+    },
+    description: 'Фильтрация статей по поддерживаемым параметрам',
+  })
+  @ApiQuery({ name: 'page', type: Number, required: false, description: 'Номер страницы (начиная с 1)' })
+  @ApiQuery({ name: 'page_size', required: false, description: 'Количество элементов на странице' })
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get articles with filters' })
+  @ApiResponse({
+    status: 201,
+    description: 'List of articles',
+    type: Article,
+    isArray: true,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad Request',
+  })
+  async searchArticles(
+    @Query() query: PaginationQueryDto, @Body() @ValidateFields(ArticleService.allowedStrings) filters: typeof ArticleService.findOptions) {
+    return this.articleService.getArticles(filters, query);
   }
 
   @Public()
@@ -61,7 +99,7 @@ export class ArticlesController {
     @GetUser() user: User | null,
   ): Promise<Article[]> {
     const tagsArray = tags.split(',').map((tag) => tag.trim()); // Преобразуем строку в массив тегов
-    return this.articlesService.findByTags(tagsArray, user);
+    return this.articleService.findByTags(tagsArray, user);
   }
 
   @Public()
@@ -75,9 +113,9 @@ export class ArticlesController {
     @Param('id') id: number,
     @GetUser() user: User | null,
   ): Promise<Article | null> {
-    if (user) return this.articlesService.findOne(id);
+    if (user) return this.articleService.findOne(id);
     else {
-      const res = await this.articlesService.findWhere({
+      const res = await this.articleService.findWhere({
         where: {
           isPublic: true,
           id: id,
@@ -98,7 +136,7 @@ export class ArticlesController {
     @Body() article: CreateArticleDto,
     @GetUser() user: User,
   ): Promise<Article> {
-    return this.articlesService.create(article, user);
+    return this.articleService.create(article, user);
   }
 
   @Put(':id')
@@ -115,7 +153,7 @@ export class ArticlesController {
     @Body() article: CreateArticleDto,
     @GetUser() user: User,
   ): Promise<Article> {
-    return this.articlesService.update(id, article, user);
+    return this.articleService.update(id, article, user);
   }
 
   @Delete(':id')
@@ -128,6 +166,6 @@ export class ArticlesController {
   @ApiResponse({ status: 404, description: 'Article not found' })
   @HttpCode(204)
   async delete(@Param('id') id: number, @GetUser() user: User): Promise<void> {
-    return this.articlesService.delete(id, user);
+    return this.articleService.delete(id, user);
   }
 }

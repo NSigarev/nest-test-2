@@ -11,6 +11,14 @@ export class CreateArticleDto {
   title!: string;
 
   @ApiProperty({
+    description: 'Description of the article',
+    example: 'NestJS is a framework.',
+  })
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @ApiProperty({
     description: 'Content of the article',
     example: 'NestJS is a framework for building efficient, scalable Node.js applications.',
   })
